@@ -1,32 +1,32 @@
 {
-  "$schema": "https://json.schemastore.org/nest-cli",
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/sneakers-api/src",
-  "compilerOptions": {
-    "deleteOutDir": true,
-    "webpack": true,
-    "tsConfigPath": "apps/sneakers-api/tsconfig.app.json"
-  },
-  "monorepo": true,
-  "root": "apps/sneakers-api",
-  "projects": {
-    "sneakers": {
-      "type": "application",
-      "root": "apps/sneakers-api",
-      "entryFile": "main",
-      "sourceRoot": "apps/sneakers-api/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/sneakers-api/tsconfig.app.json"
-      }
-    },
-    "sneakers-batch": {
-      "type": "application",
-      "root": "apps/sneakers-batch",
-      "entryFile": "main",
-      "sourceRoot": "apps/sneakers-batch/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/sneakers-batch/tsconfig.app.json"
-      }
-    }
-  }
+	"$schema": "https://json.schemastore.org/nest-cli",
+	"collection": "@nestjs/schematics",
+	"sourceRoot": "apps/sneakers-api/src",
+	"compilerOptions": {
+		"deleteOutDir": true,
+		"webpack": true,
+		"tsConfigPath": "apps/sneakers-api/tsconfig.app.json"
+	},
+	"monorepo": true,
+	"root": "apps/sneakers-api",
+	"projects": {
+		"sneakers-api": {
+			"type": "application",
+			"root": "apps/sneakers-api",
+			"entryFile": "main",
+			"sourceRoot": "apps/sneakers-api/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/sneakers-api/tsconfig.app.json"
+			}
+		},
+		"sneakers-batch": {
+			"type": "application",
+			"root": "apps/sneakers-batch",
+			"entryFile": "main",
+			"sourceRoot": "apps/sneakers-batch/src",
+			"compilerOptions": {
+				"tsConfigPath": "apps/sneakers-batch/tsconfig.app.json"
+			}
+		}
+	}
 }
