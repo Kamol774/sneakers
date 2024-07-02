@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model, ObjectId, Schema } from 'mongoose';
 import { Member } from '../../libs/dto/member/member';
 import { LoginInput, MemberInput } from '../../libs/dto/member/member.input';
 import { Message } from '../../libs/enums/common.enum';
@@ -9,23 +9,27 @@ import { ViewInput } from '../../libs/dto/view/view.input';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { T } from '../../libs/types/common';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class MemberService {
+	getMember(memberId: Schema.Types.ObjectId, targetId: any): Member | PromiseLike<Member> {
+		throw new Error('Method not implemented.');
+	}
 	constructor(
 		@InjectModel('Member') private readonly memberModel: Model<Member>,
 		// @InjectModel('Follow') private readonly followModel: Model<Follower | Following>,
-		// private authService: AuthService,
+		private authService: AuthService,
 		// private viewService: ViewService,
 		// private likeService: LikeService,
 	) {}
 
 	public async signup(input: MemberInput): Promise<Member> {
-		// input.memberPassword = await this.authService.hashPassword(input.memberPassword);
+		input.memberPassword = await this.authService.hashPassword(input.memberPassword);
 
 		try {
 			const result = await this.memberModel.create(input);
-			// result.accessToken = await this.authService.createToken(result);
+			result.accessToken = await this.authService.createToken(result);
 			// console.log('accessToken:', accessToken);
 
 			return result;
@@ -49,9 +53,9 @@ export class MemberService {
 				throw new InternalServerErrorException(Message.BLOCKED_USER);
 			}
 
-			// const isMatch = await this.authService.comparePasswords(input.memberPassword, response.memberPassword);
-			// if (!isMatch) throw new InternalServerErrorException(Message.WRONG_PASSWORD);
-			// response.accessToken = await this.authService.createToken(response);
+			const isMatch = await this.authService.comparePasswords(input.memberPassword, response.memberPassword);
+			if (!isMatch) throw new InternalServerErrorException(Message.WRONG_PASSWORD);
+			response.accessToken = await this.authService.createToken(response);
 
 			return response;
 		} catch (err) {
@@ -75,7 +79,7 @@ export class MemberService {
 	// 		const viewInput: ViewInput = { memberId: memberId, viewRefId: targetId, viewGroup: ViewGroup.MEMBER };
 	// 		// const newView = await this.viewService.recordView(viewInput);
 	// 		// if (newView) {
-	// 		//increase memberView
+	// 		// increase memberView
 	// 		await this.memberModel.findOneAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
 	// 		targetMember.memberViews++;
 	// 	}

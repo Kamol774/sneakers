@@ -21,11 +21,11 @@ export class MemberResolver {
 		return await this.memberService.login(input);
 	}
 
-	@Query(() => Member)
-	public async getMember(@Args('memberId') input: string, memberId: ObjectId): Promise<Member> {
-		console.log('Query: getMember');
-		// console.log('memberId:', memberId);
-		const targetId = shapeIntoMongoObjectId(input);
-		return await this.memberService.getMember(memberId, targetId);
-	}
+	// @Query(() => Member)
+	// public async getMember(@Args('memberId') input: string, memberId: ObjectId): Promise<Member> {
+	// 	console.log('Query: getMember');
+	// 	// console.log('memberId:', memberId);
+	// 	const targetId = shapeIntoMongoObjectId(input);
+	// 	return await this.memberService.getMember(memberId, targetId);
+	// }
 }

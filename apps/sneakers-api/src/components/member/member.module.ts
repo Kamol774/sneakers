@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MemberResolver } from './member.resolver';
 import { MemberService } from './member.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import MemberSchema from '../../schemas/Member.model';
@@ -8,6 +7,7 @@ import { ViewModule } from '../view/view.module';
 import { LikeModule } from '../like/like.module';
 import { FollowModule } from '../follow/follow.module';
 import FollowSchema from '../../schemas/Follow.model';
+import { MemberResolver } from './member.resolver';
 
 @Module({
 	imports: [
