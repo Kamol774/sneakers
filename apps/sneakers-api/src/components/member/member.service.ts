@@ -174,10 +174,15 @@ export class MemberService {
 				},
 			])
 			.exec();
-
 		// console.log('result:', result);
 		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
 		return result[0];
+	}
+
+	public async updateMemberByAdmin(input: MemberUpdate): Promise<Member> {
+		const result: Member = await this.memberModel.findOneAndUpdate({ _id: input._id }, input, { new: true }).exec();
+		if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
+		return result;
 	}
 }
