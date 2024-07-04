@@ -5,6 +5,8 @@ import { Member, Members } from '../../libs/dto/member/member';
 import { LoginInput, MemberInput, MembersInquiry } from '../../libs/dto/member/member.input';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { MemberStatus } from '../../libs/enums/member.enum';
+import { ViewService } from '../view/view.service';
+
 import { ViewInput } from '../../libs/dto/view/view.input';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { LikeGroup } from '../../libs/enums/like.enum';
@@ -18,7 +20,7 @@ export class MemberService {
 		@InjectModel('Member') private readonly memberModel: Model<Member>,
 		// @InjectModel('Follow') private readonly followModel: Model<Follower | Following>,
 		private authService: AuthService,
-		// private viewService: ViewService,
+		private viewService: ViewService,
 		// private likeService: LikeService,
 	) {}
 
@@ -89,16 +91,16 @@ export class MemberService {
 		const targetMember = await this.memberModel.findOne(search).lean().exec();
 		if (!targetMember) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
-		// if (memberId) {
-		// 	// record view
-		// 	const viewInput: ViewInput = { memberId: memberId, viewRefId: targetId, viewGroup: ViewGroup.MEMBER };
-		// 	const newView = await this.viewService.recordView(viewInput);
-		// 	if (newView) {
-		// 		//increase memberView
-		// 		await this.memberModel.findOneAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
-		// 		targetMember.memberViews++;
-		// 	}
-		// }
+		if (memberId) {
+			// record view
+			const viewInput: ViewInput = { memberId: memberId, viewRefId: targetId, viewGroup: ViewGroup.MEMBER };
+			const newView = await this.viewService.recordView(viewInput);
+			if (newView) {
+				//increase memberView
+				await this.memberModel.findOneAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
+				targetMember.memberViews++;
+			}
+		}
 
 		// meLiked
 		// const likeInput = { memberId: memberId, likeRefId: targetId, likeGroup: LikeGroup.MEMBER };
