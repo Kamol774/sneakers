@@ -29,22 +29,6 @@ export class MemberResolver {
 		return await this.memberService.login(input);
 	}
 
-	@UseGuards(AuthGuard)
-	@Mutation(() => Member)
-	// authMemberni xoxlagan nom bn atash mumkin   authMember=data=memberNick
-	// memberimni umumiy malumoti kerak bolsa @AuthMember()ni ichiga xechnimani qoymeymiz
-	public async updateMember(
-		@Args('input') input: MemberUpdate,
-		@AuthMember('_id') memberId: ObjectId,
-	): Promise<Member> {
-		console.log('Mutation: updateMember');
-		console.log('memberId', memberId);
-		delete input._id;
-		console.log(input._id);
-
-		return await this.memberService.updateMember(memberId, input);
-	}
-
 	// for testing
 	@UseGuards(AuthGuard)
 	@Query(() => String)
@@ -63,6 +47,22 @@ export class MemberResolver {
 		console.log('Query: RolesGuard');
 
 		return `Hi ${authMember.memberNick}, you are ${authMember.memberType} (memberId: ${authMember._id})`;
+	}
+
+	@UseGuards(AuthGuard)
+	@Mutation(() => Member)
+	// authMemberni xoxlagan nom bn atash mumkin   authMember=data=memberNick
+	// memberimni umumiy malumoti kerak bolsa @AuthMember()ni ichiga xechnimani qoymeymiz
+	public async updateMember(
+		@Args('input') input: MemberUpdate,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Member> {
+		console.log('Mutation: updateMember');
+		console.log('memberId', memberId);
+		delete input._id;
+		console.log(input._id);
+
+		return await this.memberService.updateMember(memberId, input);
 	}
 
 	@UseGuards(WithoutGuard)
