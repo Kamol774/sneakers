@@ -2,9 +2,9 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId, Schema } from 'mongoose';
 import { Member, Members } from '../../libs/dto/member/member';
-import { LoginInput, MemberInput, MembersInquiry } from '../../libs/dto/member/member.input';
+import { AgentsInquiry, LoginInput, MemberInput, MembersInquiry } from '../../libs/dto/member/member.input';
 import { Direction, Message } from '../../libs/enums/common.enum';
-import { MemberStatus } from '../../libs/enums/member.enum';
+import { MemberStatus, MemberType } from '../../libs/enums/member.enum';
 import { ViewService } from '../view/view.service';
 
 import { ViewInput } from '../../libs/dto/view/view.input';
@@ -13,6 +13,7 @@ import { LikeGroup } from '../../libs/enums/like.enum';
 import { T } from '../../libs/types/common';
 import { AuthService } from '../auth/auth.service';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
+import { lookupAuthMemberLiked } from '../../libs/config';
 
 @Injectable()
 export class MemberService {
@@ -110,6 +111,41 @@ export class MemberService {
 		// targetMember.meFollowed = await this.checkSubscription(memberId, targetId);
 
 		return targetMember;
+	}
+
+	public async getAgents(memberId: ObjectId, input: AgentsInquiry): Promise<Members> {
+		const { text } = input.search;
+		const match: T = { memberType: MemberType.AGENT, memberStatus: MemberStatus.ACTIVE };
+		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC }; //bu ->
+		// -> shu mantiq bn bir xil korinish bn boladi
+		// const sort: T = { createdAt: -1 };
+
+		if (text) match.memberNick = { $regex: new RegExp(text, 'i') };
+		console.log('match:', match);
+
+		const result = await this.memberModel
+			.aggregate([
+				{ $match: match },
+				{ $sort: sort },
+				{
+					$facet: {
+						list: [
+							{ $skip: (input.page - 1) * input.limit },
+							{ $limit: input.limit },
+							//meLiked
+							// lookupAuthMemberLiked(memberId,"$_id") -> "$_id" tushirib qoldirsekham mantiq ishloradi
+							lookupAuthMemberLiked(memberId),
+						],
+						metaCounter: [{ $count: 'total' }],
+					},
+				},
+			])
+			.exec();
+
+		// console.log('result:', result);
+		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+		return result[0];
 	}
 
 	// Authorization: ADMIN
