@@ -29,16 +29,6 @@ export class MemberResolver {
 		return await this.memberService.login(input);
 	}
 
-	// for testing
-	@UseGuards(AuthGuard)
-	@Query(() => String)
-	public async checkAuth(@AuthMember('memberNick') memberNick: string): Promise<string> {
-		console.log('Query: checkAuth');
-		console.log('memberNick:', memberNick);
-
-		return `Hi ${memberNick}`;
-	}
-
 	@UseGuards(AuthGuard)
 	@Mutation(() => Member)
 	// authMemberni xoxlagan nom bn atash mumkin   authMember=data=memberNick
@@ -55,6 +45,26 @@ export class MemberResolver {
 		return await this.memberService.updateMember(memberId, input);
 	}
 
+	// for testing
+	@UseGuards(AuthGuard)
+	@Query(() => String)
+	public async checkAuth(@AuthMember('memberNick') memberNick: string): Promise<string> {
+		console.log('Query: checkAuth');
+		console.log('memberNick:', memberNick);
+
+		return `Hi ${memberNick}`;
+	}
+
+	// for testing
+	@Roles(MemberType.USER, MemberType.AGENT)
+	@UseGuards(RolesGuard)
+	@Query(() => String)
+	public async checkAuthRoles(@AuthMember() authMember: Member): Promise<string> {
+		console.log('Query: RolesGuard');
+
+		return `Hi ${authMember.memberNick}, you are ${authMember.memberType} (memberId: ${authMember._id})`;
+	}
+
 	@UseGuards(WithoutGuard)
 	@Query(() => Member)
 	public async getMember(@Args('memberId') input: string, @AuthMember('_id') memberId: ObjectId): Promise<Member> {
@@ -65,6 +75,7 @@ export class MemberResolver {
 	}
 
 	/** ADMIN **/
+
 	@Roles(MemberType.ADMIN)
 	@UseGuards(RolesGuard)
 	@Query(() => Members)
