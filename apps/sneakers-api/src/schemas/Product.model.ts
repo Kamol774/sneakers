@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { ProductLocation, ProductStatus, ProductType } from '../libs/enums/product.enum';
+import { ProductBrand, ProductColor, ProductSeason, ProductStatus, ProductType } from '../libs/enums/product.enum';
 
 const ProductSchema = new Schema(
 	{
@@ -15,14 +15,9 @@ const ProductSchema = new Schema(
 			default: ProductStatus.ACTIVE,
 		},
 
-		productLocation: {
+		productBrand: {
 			type: String,
-			enum: ProductLocation,
-			required: true,
-		},
-
-		productAddress: {
-			type: String,
+			enum: ProductBrand,
 			required: true,
 		},
 
@@ -36,18 +31,20 @@ const ProductSchema = new Schema(
 			required: true,
 		},
 
-		productSquare: {
+		productSize: {
 			type: Number,
 			required: true,
 		},
 
-		productBeds: {
-			type: Number,
+		productColor: {
+			type: String,
+			enum: ProductColor,
 			required: true,
 		},
 
-		productRooms: {
-			type: Number,
+		productSeason: {
+			type: String,
+			enum: ProductSeason,
 			required: true,
 		},
 
@@ -80,16 +77,6 @@ const ProductSchema = new Schema(
 			type: String,
 		},
 
-		productBarter: {
-			type: Boolean,
-			default: false,
-		},
-
-		productRent: {
-			type: Boolean,
-			default: false,
-		},
-
 		memberId: {
 			type: Schema.Types.ObjectId,
 			required: true,
@@ -103,14 +90,10 @@ const ProductSchema = new Schema(
 		deletedAt: {
 			type: Date,
 		},
-
-		constructedAt: {
-			type: Date,
-		},
 	},
 	{ timestamps: true, collection: 'products' },
 );
 
-ProductSchema.index({ productType: 1, productLocation: 1, productTitle: 1, productPrice: 1 }, { unique: true });
+ProductSchema.index({ productType: 1, productTitle: 1, productPrice: 1 }, { unique: true });
 
 export default ProductSchema;

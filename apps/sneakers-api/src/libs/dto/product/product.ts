@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { ObjectId } from 'mongoose';
-import { ProductLocation, ProductStatus, ProductType } from '../../enums/product.enum';
+import { ProductBrand, ProductColor, ProductSeason, ProductStatus, ProductType } from '../../enums/product.enum';
 import { Member, TotalCounter } from '../member/member';
 import { MeLiked } from '../like/like';
 
@@ -15,11 +15,8 @@ export class Product {
 	@Field(() => ProductStatus)
 	productStatus: ProductStatus;
 
-	@Field(() => ProductLocation)
-	productLocation: ProductLocation;
-
-	@Field(() => String)
-	productAddress: string;
+	@Field(() => ProductBrand)
+	productBrand: ProductBrand;
 
 	@Field(() => String)
 	productTitle: string;
@@ -28,13 +25,13 @@ export class Product {
 	productPrice: number;
 
 	@Field(() => Number)
-	productSquare: number;
+	productSize: number;
 
-	@Field(() => Int) // -> to change Int later
-	productBeds: number;
+	@Field(() => ProductColor)
+	productColor: ProductColor;
 
-	@Field(() => Int) // -> to change Int later
-	productRooms: number;
+	@Field(() => ProductSeason)
+	productSeason: ProductSeason;
 
 	@Field(() => Int)
 	productViews: number;
@@ -54,12 +51,6 @@ export class Product {
 	@Field(() => String, { nullable: true })
 	productDesc?: string;
 
-	@Field(() => Boolean)
-	productBarter: boolean;
-
-	@Field(() => Boolean)
-	productRent: boolean;
-
 	@Field(() => String)
 	memberId: ObjectId;
 
@@ -68,9 +59,6 @@ export class Product {
 
 	@Field(() => Date, { nullable: true })
 	deletedAt?: Date;
-
-	@Field(() => Date, { nullable: true })
-	constructedAt?: Date;
 
 	@Field(() => Date)
 	createdAt: Date;

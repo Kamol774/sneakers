@@ -1,6 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsIn, IsInt, IsNotEmpty, IsOptional, Length, Min } from 'class-validator';
-import { ProductLocation, ProductStatus, ProductType } from '../../enums/product.enum';
+import { ProductBrand, ProductColor, ProductSeason, ProductStatus, ProductType } from '../../enums/product.enum';
 import { ObjectId } from 'mongoose';
 import { availableOptions, availableProductSorts } from '../../config';
 import { Direction } from '../../enums/common.enum';
@@ -12,13 +12,8 @@ export class ProductInput {
 	productType: ProductType;
 
 	@IsNotEmpty()
-	@Field(() => ProductLocation)
-	productLocation: ProductLocation;
-
-	@IsNotEmpty()
-	@Length(3, 100)
-	@Field(() => String)
-	productAddress: string;
+	@Field(() => ProductBrand)
+	productBrand: ProductBrand;
 
 	@IsNotEmpty()
 	@Length(3, 100)
@@ -30,20 +25,17 @@ export class ProductInput {
 	productPrice: number;
 
 	@IsNotEmpty()
+	@IsInt()
 	@Field(() => Number)
-	productSquare: number;
+	productSize: number;
 
 	@IsNotEmpty()
-	@IsInt()
-	@Min(1)
-	@Field(() => Int) // -> checking INT
-	productBeds: number;
+	@Field(() => ProductColor)
+	productColor: ProductColor;
 
 	@IsNotEmpty()
-	@IsInt()
-	@Min(1)
-	@Field(() => Int) //-> checking INT
-	productRooms: number;
+	@Field(() => ProductSeason)
+	productSeason: ProductSeason;
 
 	@IsNotEmpty()
 	@Field(() => [String])
@@ -54,20 +46,8 @@ export class ProductInput {
 	@Field(() => String, { nullable: true })
 	productDesc?: string;
 
-	@IsOptional()
-	@Field(() => Boolean, { nullable: true })
-	productBarter?: boolean;
-
-	@IsOptional()
-	@Field(() => Boolean, { nullable: true })
-	productRent?: boolean;
-
 	// bu frontendan yuborilishi talab etilmaydi. Authentication bosqichida biz memberID ni qabul qilib olamiz chunki
 	memberId?: ObjectId;
-
-	@IsOptional()
-	@Field(() => Date, { nullable: true })
-	constructedAt?: Date;
 }
 
 @InputType()
@@ -80,7 +60,7 @@ export class PricesRange {
 }
 
 @InputType()
-export class SquaresRange {
+export class SizeRange {
 	@Field(() => Int)
 	start: number;
 
@@ -88,14 +68,14 @@ export class SquaresRange {
 	end: number;
 }
 
-@InputType()
-export class PeriodsRange {
-	@Field(() => Date)
-	start: Date;
+// @InputType()
+// export class PeriodsRange {
+// 	@Field(() => Date)
+// 	start: Date;
 
-	@Field(() => Date)
-	end: Date;
-}
+// 	@Field(() => Date)
+// 	end: Date;
+// }
 
 @InputType()
 class PISearch {
@@ -103,21 +83,13 @@ class PISearch {
 	@Field(() => String, { nullable: true })
 	memberId?: ObjectId;
 
-	@IsOptional()
-	@Field(() => [ProductLocation], { nullable: true })
-	locationList?: ProductLocation[];
+	// @IsOptional()
+	// @Field(() => [ProductLocation], { nullable: true })
+	// locationList?: ProductLocation[];
 
 	@IsOptional()
 	@Field(() => [ProductType], { nullable: true })
 	typeList?: ProductType[];
-
-	@IsOptional()
-	@Field(() => [Int], { nullable: true })
-	roomsList?: number[];
-
-	@IsOptional()
-	@Field(() => [Int], { nullable: true })
-	bedsList?: number[];
 
 	@IsOptional()
 	@IsIn(availableOptions, { each: true })
@@ -128,13 +100,13 @@ class PISearch {
 	@Field(() => PricesRange, { nullable: true })
 	pricesRange?: PricesRange;
 
-	@IsOptional()
-	@Field(() => PeriodsRange, { nullable: true })
-	periodsRange?: PeriodsRange;
+	// @IsOptional()
+	// @Field(() => PeriodsRange, { nullable: true })
+	// periodsRange?: PeriodsRange;
 
 	@IsOptional()
-	@Field(() => SquaresRange, { nullable: true })
-	squaresRange?: SquaresRange;
+	@Field(() => SizeRange, { nullable: true })
+	sizeRange?: SizeRange;
 
 	@IsOptional()
 	@Field(() => String, { nullable: true })
@@ -173,9 +145,9 @@ class ALPISearch {
 	@Field(() => ProductStatus, { nullable: true })
 	productStatus?: ProductStatus;
 
-	@IsOptional()
-	@Field(() => [ProductLocation], { nullable: true })
-	productLocationList?: ProductLocation[];
+	// @IsOptional()
+	// @Field(() => [ProductLocation], { nullable: true })
+	// productLocationList?: ProductLocation[];
 }
 
 @InputType()

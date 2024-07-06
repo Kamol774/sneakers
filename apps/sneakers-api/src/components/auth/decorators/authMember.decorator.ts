@@ -12,5 +12,5 @@ export const AuthMember = createParamDecorator((data: string, context: Execution
 	const member = request.body.authMember;
 
 	if (member) return data ? member?.[data] : member;
-	else return null;
+	else return member;
 });
