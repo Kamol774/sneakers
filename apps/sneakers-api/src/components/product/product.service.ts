@@ -137,34 +137,6 @@ export class ProductService {
 		return result[0];
 	}
 
-	private shapeMatchQuery(match: T, input: ProductsInquiry): void {
-		const {
-			memberId,
-			// locationList,
-			typeList,
-			// periodsRange,
-			pricesRange,
-			// sizeRange,
-			options,
-			text,
-		} = input.search;
-
-		if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
-		// if (locationList && locationList.length) match.productLocation = { $in: locationList };
-		if (typeList && typeList.length) match.productType = { $in: typeList };
-
-		if (pricesRange) match.productPrice = { $gte: pricesRange.start, $lte: pricesRange.end };
-		// if (periodsRange) match.createdAt = { $gte: periodsRange.start, $lte: periodsRange.end };
-		// if (sizeRange) match.productSize = { $gte: sizeRange.start, $lte: sizeRange.end };
-
-		if (text) match.productTitle = { $regex: new RegExp(text, 'i') };
-		if (options) {
-			match['$or'] = options.map((ele) => {
-				return { [ele]: true };
-			});
-		}
-	}
-
 	// public async getFavorites(memberId: ObjectId, input: OrdinaryInquiry): Promise<Products> {
 	// 	return await this.likeService.getFavoriteProducts(memberId, input);
 	// }
@@ -232,6 +204,24 @@ export class ProductService {
 	// 	if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
 	// 	return result;
 	// }
+
+	private shapeMatchQuery(match: T, input: ProductsInquiry): void {
+		const { memberId, typeList, brandList, pricesRange, sizeRange, options, text } = input.search;
+
+		if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
+		if (typeList && typeList.length) match.productType = { $in: typeList };
+		if (brandList && brandList.length) match.productBrand = { $in: brandList };
+		if (pricesRange) match.productPrice = { $gte: pricesRange.start, $lte: pricesRange.end };
+
+		if (sizeRange) match.sizeRange = { $gte: sizeRange.start, $lte: sizeRange.end };
+
+		if (text) match.productTitle = { $regex: new RegExp(text, 'i') };
+		if (options) {
+			match['$or'] = options.map((ele) => {
+				return { [ele]: true };
+			});
+		}
+	}
 
 	/**************************
 	 *         ADMIN        *

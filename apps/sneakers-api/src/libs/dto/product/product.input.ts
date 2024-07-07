@@ -68,24 +68,11 @@ export class SizeRange {
 	end: number;
 }
 
-// @InputType()
-// export class PeriodsRange {
-// 	@Field(() => Date)
-// 	start: Date;
-
-// 	@Field(() => Date)
-// 	end: Date;
-// }
-
 @InputType()
 class PISearch {
 	@IsOptional()
 	@Field(() => String, { nullable: true })
 	memberId?: ObjectId;
-
-	// @IsOptional()
-	// @Field(() => [ProductLocation], { nullable: true })
-	// locationList?: ProductLocation[];
 
 	@IsOptional()
 	@Field(() => [ProductType], { nullable: true })
@@ -100,9 +87,9 @@ class PISearch {
 	@Field(() => PricesRange, { nullable: true })
 	pricesRange?: PricesRange;
 
-	// @IsOptional()
-	// @Field(() => PeriodsRange, { nullable: true })
-	// periodsRange?: PeriodsRange;
+	@IsOptional()
+	@Field(() => [ProductBrand], { nullable: true })
+	brandList?: ProductBrand[];
 
 	@IsOptional()
 	@Field(() => SizeRange, { nullable: true })
