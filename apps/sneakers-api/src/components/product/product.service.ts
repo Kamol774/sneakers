@@ -8,6 +8,7 @@ import {
 	AllProductsInquiry,
 	ProductsInquiry,
 	ProductInput,
+	OrdinaryInquiry,
 } from '../../libs/dto/product/product.input';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { MemberService } from '../member/member.service';
@@ -18,7 +19,7 @@ import { ViewService } from '../view/view.service';
 
 import * as moment from 'moment';
 import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
-// import { LikeService } from '../like/like.service';
+import { LikeService } from '../like/like.service';
 import { MemberStatus } from '../../libs/enums/member.enum';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
@@ -32,7 +33,7 @@ export class ProductService {
 		private readonly productModel: Model<Product>,
 		private memberService: MemberService,
 		private viewService: ViewService,
-		// private likeService: LikeService,
+		private likeService: LikeService,
 	) {}
 
 	public async createProduct(input: ProductInput): Promise<Product> {
@@ -69,9 +70,9 @@ export class ProductService {
 				await this.productStatsEditor({ _id: productId, targetKey: 'productViews', modifier: 1 });
 				targetProduct.productViews++;
 			}
-			// //me liked
-			// const likeInput = { memberId: memberId, likeRefId: productId, likeGroup: LikeGroup.product };
-			// targetproduct.meLiked = await this.likeService.checkLikeExistence(likeInput);
+			//me liked
+			const likeInput = { memberId: memberId, likeRefId: productId, likeGroup: LikeGroup.PRODUCT };
+			targetProduct.meLiked = await this.likeService.checkLikeExistence(likeInput);
 		}
 		// null bolishligiga sabab kim korayotganligini korishimiz shartmas
 		targetProduct.memberData = await this.memberService.getMember(null, targetProduct.memberId);
@@ -137,13 +138,13 @@ export class ProductService {
 		return result[0];
 	}
 
-	// public async getFavorites(memberId: ObjectId, input: OrdinaryInquiry): Promise<Products> {
-	// 	return await this.likeService.getFavoriteProducts(memberId, input);
-	// }
+	public async getFavorites(memberId: ObjectId, input: OrdinaryInquiry): Promise<Products> {
+		return await this.likeService.getFavoriteProducts(memberId, input);
+	}
 
-	// public async getVisited(memberId: ObjectId, input: OrdinaryInquiry): Promise<Products> {
-	// 	return await this.viewService.getVisitedProducts(memberId, input);
-	// }
+	public async getVisited(memberId: ObjectId, input: OrdinaryInquiry): Promise<Products> {
+		return await this.viewService.getVisitedProducts(memberId, input);
+	}
 
 	public async getAgentProducts(memberId: ObjectId, input: AgentProductsInquiry): Promise<Products> {
 		const { productStatus } = input.search;
@@ -182,28 +183,28 @@ export class ProductService {
 	}
 
 	/**  Like **/
-	// public async likeTargetProduct(memberId: ObjectId, likeRefId: ObjectId): Promise<Product> {
-	// 	const target: Product = await this.productModel
-	// 		.findOne({ _id: likeRefId, productStatus: ProductStatus.ACTIVE })
-	// 		.exec();
-	// 	if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+	public async likeTargetProduct(memberId: ObjectId, likeRefId: ObjectId): Promise<Product> {
+		const target: Product = await this.productModel
+			.findOne({ _id: likeRefId, productStatus: ProductStatus.ACTIVE })
+			.exec();
+		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
-	// 	const input: LikeInput = {
-	// 		memberId: memberId,
-	// 		likeRefId: likeRefId,
-	// 		likeGroup: LikeGroup.product,
-	// 	};
+		const input: LikeInput = {
+			memberId: memberId,
+			likeRefId: likeRefId,
+			likeGroup: LikeGroup.PRODUCT,
+		};
 
-	// 	// Like TOGGLE -1 +1 via Like Modules
-	// 	const modifier: number = await this.likeService.toggleLike(input);
-	// 	const result = await this.productStatsEditor({
-	// 		_id: likeRefId,
-	// 		targetKey: 'productLikes',
-	// 		modifier,
-	// 	});
-	// 	if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
-	// 	return result;
-	// }
+		// Like TOGGLE -1 +1 via Like Modules
+		const modifier: number = await this.likeService.toggleLike(input);
+		const result = await this.productStatsEditor({
+			_id: likeRefId,
+			targetKey: 'productLikes',
+			modifier,
+		});
+		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
+		return result;
+	}
 
 	private shapeMatchQuery(match: T, input: ProductsInquiry): void {
 		const { memberId, typeList, brandList, pricesRange, sizeRange, options, text } = input.search;

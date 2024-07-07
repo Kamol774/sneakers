@@ -17,6 +17,7 @@ import { ProductUpdate } from '../../libs/dto/product/product.update';
 import {
 	AgentProductsInquiry,
 	AllProductsInquiry,
+	OrdinaryInquiry,
 	ProductInput,
 	ProductsInquiry,
 } from '../../libs/dto/product/product.input';
@@ -74,16 +75,16 @@ export class ProductResolver {
 		return await this.productService.getProducts(memberId, input);
 	}
 
-	// @UseGuards(AuthGuard)
-	// @Query(() => Products)
-	// public async getFavorites(
-	// 	@Args('input') input: OrdinaryInquiry,
-	// 	@AuthMember('_id') memberId: ObjectId,
-	// ): Promise<Products> {
-	// 	console.log('Query: getFavorites');
+	@UseGuards(AuthGuard)
+	@Query(() => Products)
+	public async getFavorites(
+		@Args('input') input: OrdinaryInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Products> {
+		console.log('Query: getFavorites');
 
-	// 	return await this.productService.getFavorites(memberId, input);
-	// }
+		return await this.productService.getFavorites(memberId, input);
+	}
 
 	// @UseGuards(AuthGuard)
 	// @Query(() => Products)
@@ -109,16 +110,16 @@ export class ProductResolver {
 	}
 
 	/** Like **/
-	// @UseGuards(AuthGuard)
-	// @Mutation(() => Product)
-	// public async likeTargetProduct(
-	// 	@Args('productId') input: string,
-	// 	@AuthMember('_id') memberId: ObjectId,
-	// ): Promise<Product> {
-	// 	console.log('Mutation: likeTargetProduct');
-	// 	const likeRefId = shapeIntoMongoObjectId(input);
-	// 	return await this.productService.likeTargetProduct(memberId, likeRefId);
-	// }
+	@UseGuards(AuthGuard)
+	@Mutation(() => Product)
+	public async likeTargetProduct(
+		@Args('productId') input: string,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Product> {
+		console.log('Mutation: likeTargetProduct');
+		const likeRefId = shapeIntoMongoObjectId(input);
+		return await this.productService.likeTargetProduct(memberId, likeRefId);
+	}
 
 	/**  ADMIN  **/
 

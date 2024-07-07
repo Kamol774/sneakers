@@ -68,18 +68,18 @@ export class BoardArticleResolver {
 		return await this.boardArticleService.getBoardArticles(memberId, input);
 	}
 
-	// @UseGuards(AuthGuard)
-	// @Mutation((returns) => BoardArticle)
-	// public async likeTargetBoardArticle(
-	// 	@Args('articleId') input: string,
-	// 	@AuthMember('_id') memberId: ObjectId,
-	// ): Promise<BoardArticle> {
-	// 	console.log('Mutation: likeTargetBoardArticle');
+	@UseGuards(AuthGuard)
+	@Mutation((returns) => BoardArticle)
+	public async likeTargetBoardArticle(
+		@Args('articleId') input: string,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<BoardArticle> {
+		console.log('Mutation: likeTargetBoardArticle');
 
-	// 	const likeRefId = shapeIntoMongoObjectId(input);
+		const likeRefId = shapeIntoMongoObjectId(input);
 
-	// 	return await this.boardArticleService.likeTargetBoardArticle(memberId, likeRefId);
-	// }
+		return await this.boardArticleService.likeTargetBoardArticle(memberId, likeRefId);
+	}
 
 	/**  ADMIN  **/
 

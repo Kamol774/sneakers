@@ -15,6 +15,8 @@ import { AuthService } from '../auth/auth.service';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
 import { lookupAuthMemberLiked } from '../../libs/config';
 import { Follower, Following } from '../../libs/dto/follow/follow';
+import { LikeService } from '../like/like.service';
+import { LikeInput } from '../../libs/dto/like/like.input';
 
 @Injectable()
 export class MemberService {
@@ -23,7 +25,7 @@ export class MemberService {
 		@InjectModel('Follow') private readonly followModel: Model<Follower | Following>,
 		private authService: AuthService,
 		private viewService: ViewService,
-		// private likeService: LikeService,
+		private likeService: LikeService,
 	) {}
 
 	public async signup(input: MemberInput): Promise<Member> {
@@ -105,10 +107,10 @@ export class MemberService {
 		}
 
 		// meLiked
-		// const likeInput = { memberId: memberId, likeRefId: targetId, likeGroup: LikeGroup.MEMBER };
-		// targetMember.meLiked = await this.likeService.checkLikeExistence(likeInput);
+		const likeInput = { memberId: memberId, likeRefId: targetId, likeGroup: LikeGroup.MEMBER };
+		targetMember.meLiked = await this.likeService.checkLikeExistence(likeInput);
 
-		//meFollowed
+		// meFollowed
 		// targetMember.meFollowed = await this.checkSubscription(memberId, targetId);
 
 		return targetMember;
@@ -147,6 +149,27 @@ export class MemberService {
 		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
 		return result[0];
+	}
+
+	public async likeTargetMember(memberId: ObjectId, likeRefId: ObjectId): Promise<Member> {
+		const target: Member = await this.memberModel.findOne({ _id: likeRefId, memberStatus: MemberStatus.ACTIVE }).exec();
+		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+		const input: LikeInput = {
+			memberId: memberId,
+			likeRefId: likeRefId,
+			likeGroup: LikeGroup.MEMBER,
+		};
+
+		// Like TOGGLE -1 +1 via Like Modules
+		const modifier: number = await this.likeService.toggleLike(input);
+		const result = await this.memberStatsEditor({
+			_id: likeRefId,
+			targetKey: 'memberLikes',
+			modifier,
+		});
+		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
+		return result;
 	}
 
 	// Authorization: ADMIN
