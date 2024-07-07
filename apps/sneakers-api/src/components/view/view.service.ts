@@ -4,10 +4,10 @@ import { Model, ObjectId } from 'mongoose';
 import { View } from '../../libs/dto/view/view';
 import { ViewInput } from '../../libs/dto/view/view.input';
 import { T } from '../../libs/types/common';
-import { OrdinaryInquiry } from '../../libs/dto/product/product.input';
-import { Products } from '../../libs/dto/product/product';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { lookupVisit } from '../../libs/config';
+import { OrdinaryInquiry } from '../../libs/dto/product/product.input';
+import { Products } from '../../libs/dto/product/product';
 
 @Injectable()
 export class ViewService {

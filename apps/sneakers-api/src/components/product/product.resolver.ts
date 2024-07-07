@@ -86,16 +86,16 @@ export class ProductResolver {
 		return await this.productService.getFavorites(memberId, input);
 	}
 
-	// @UseGuards(AuthGuard)
-	// @Query(() => Products)
-	// public async getVisited(
-	// 	@Args('input') input: OrdinaryInquiry,
-	// 	@AuthMember('_id') memberId: ObjectId,
-	// ): Promise<Products> {
-	// 	console.log('Query: getVisited');
+	@UseGuards(AuthGuard)
+	@Query(() => Products)
+	public async getVisited(
+		@Args('input') input: OrdinaryInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Products> {
+		console.log('Query: getVisited');
 
-	// 	return await this.productService.getVisited(memberId, input);
-	// }
+		return await this.productService.getVisited(memberId, input);
+	}
 
 	@Roles(MemberType.AGENT)
 	@UseGuards(RolesGuard)
