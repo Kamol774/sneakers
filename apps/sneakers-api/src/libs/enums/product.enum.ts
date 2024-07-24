@@ -26,7 +26,7 @@ export enum ProductBrand {
 	WORLD_CUP = 'WORLD_CUP',
 	TOP_TEN = 'TOP_TEN',
 	FILA = 'FILA',
-	ELSO = 'ELSO',
+	ELSA = 'ELSA',
 	NEW_BALANCE = 'NEW_BALANCE',
 	NIKE = 'NIKE',
 	AIR_MAX = 'AIR_MAX',
@@ -57,7 +57,7 @@ registerEnumType(ProductColor, {
 });
 
 export enum ProductSeason {
-	ALL_SEASONS = 'ALL_SEASONS',
+	ALL = 'ALL',
 	SPRING_FALL = 'SPRING_FALL',
 	SUMMER = 'SUMMER',
 	WINTER = 'WINTER',

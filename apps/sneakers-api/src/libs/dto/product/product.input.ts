@@ -60,7 +60,7 @@ export class PricesRange {
 }
 
 @InputType()
-export class SizeRange {
+export class SizesRange {
 	@Field(() => Int)
 	start: number;
 
@@ -88,12 +88,20 @@ class PISearch {
 	pricesRange?: PricesRange;
 
 	@IsOptional()
+	@Field(() => SizesRange, { nullable: true })
+	sizesRange?: SizesRange;
+
+	@IsOptional()
 	@Field(() => [ProductBrand], { nullable: true })
 	brandList?: ProductBrand[];
 
 	@IsOptional()
-	@Field(() => SizeRange, { nullable: true })
-	sizeRange?: SizeRange;
+	@Field(() => [ProductColor], { nullable: true })
+	colorsList?: ProductColor[];
+
+	@IsOptional()
+	@Field(() => [ProductSeason], { nullable: true })
+	seasonList?: ProductSeason[];
 
 	@IsOptional()
 	@Field(() => String, { nullable: true })
