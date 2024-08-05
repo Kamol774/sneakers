@@ -8,6 +8,7 @@ import { LikeModule } from '../like/like.module';
 import { FollowModule } from '../follow/follow.module';
 import FollowSchema from '../../schemas/Follow.model';
 import { MemberResolver } from './member.resolver';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
 	imports: [
@@ -16,6 +17,8 @@ import { MemberResolver } from './member.resolver';
 		AuthModule,
 		ViewModule,
 		LikeModule,
+		MemberModule,
+		NotificationModule,
 	],
 
 	providers: [MemberResolver, MemberService],

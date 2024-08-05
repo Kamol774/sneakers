@@ -3,7 +3,7 @@ import { registerEnumType } from '@nestjs/graphql';
 export enum ProductType {
 	UNISEX = 'UNISEX',
 	MAN = 'MAN',
-	WOMEN = 'WOMEN',
+	WOMAN = 'WOMAN',
 	CHILDREN = 'CHILDREN',
 }
 registerEnumType(ProductType, {

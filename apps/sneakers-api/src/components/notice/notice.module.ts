@@ -1,22 +1,13 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { AuthModule } from '../auth/auth.module';
 import { NoticeResolver } from './notice.resolver';
 import { NoticeService } from './notice.service';
+import { MongooseModule } from '@nestjs/mongoose';
 import NoticeSchema from '../../schemas/Notice.model';
+import { MemberModule } from '../member/member.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-	imports: [
-		MongooseModule.forFeature([
-			{
-				name: 'Notice',
-				schema: NoticeSchema,
-			},
-		]),
-		AuthModule,
-	],
-
+	imports: [MongooseModule.forFeature([{ name: 'Notice', schema: NoticeSchema }]), MemberModule, AuthModule],
 	providers: [NoticeResolver, NoticeService],
-	exports: [NoticeService],
 })
 export class NoticeModule {}

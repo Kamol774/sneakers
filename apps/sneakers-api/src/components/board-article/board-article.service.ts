@@ -19,14 +19,22 @@ import { BoardArticleUpdate } from '../../libs/dto/board-article/board-article.u
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { LikeService } from '../like/like.service';
+import { NotificationInput } from '../../libs/dto/notification/notification.input';
+import { MemberStatus } from '../../libs/enums/member.enum';
+import { NotificationGroup, NotificationStatus, NotificationType } from '../../libs/enums/notification.enum';
+import { NotificationService } from '../notification/notification.service';
+import { Member } from '../../libs/dto/member/member';
 
 @Injectable()
 export class BoardArticleService {
 	constructor(
 		@InjectModel('BoardArticle') private readonly boardArticleModel: Model<BoardArticle>,
+		@InjectModel('Member') private readonly memberModel: Model<Member>,
+
 		private readonly memberService: MemberService,
 		private readonly viewService: ViewService,
 		private readonly likeService: LikeService,
+		private readonly notificationService: NotificationService,
 	) {}
 
 	public async createBoardArticle(memberId: ObjectId, input: BoardArticleInput): Promise<BoardArticle> {
@@ -146,6 +154,24 @@ export class BoardArticleService {
 			likeRefId: likeRefId,
 			likeGroup: LikeGroup.ARTICLE,
 		};
+
+		// NOTIFICATION
+		const authMember: Member = await this.memberModel
+			.findOne({ _id: memberId, memberStatus: MemberStatus.ACTIVE })
+			.exec();
+		if (!authMember) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+		const notificInput: NotificationInput = {
+			notificationGroup: NotificationGroup.ARTICLE,
+			notificationType: NotificationType.LIKE,
+			notificationStatus: NotificationStatus.WAIT,
+			notificationTitle: `Liked`,
+			notificationDesc: `${authMember.memberNick} liked your article ${target.articleTitle} `,
+			authorId: memberId,
+			receiverId: target.memberId,
+			articleId: likeRefId,
+		};
+		await this.notificationService.createNotification(notificInput);
 
 		// Like Toggle va Like modules
 		const modifier: number = await this.likeService.toggleLike(input);

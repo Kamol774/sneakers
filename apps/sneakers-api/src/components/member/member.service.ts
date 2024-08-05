@@ -17,6 +17,9 @@ import { lookupAuthMemberLiked } from '../../libs/config';
 import { Follower, Following } from '../../libs/dto/follow/follow';
 import { LikeService } from '../like/like.service';
 import { LikeInput } from '../../libs/dto/like/like.input';
+import { NotificationInput } from '../../libs/dto/notification/notification.input';
+import { NotificationGroup, NotificationStatus, NotificationType } from '../../libs/enums/notification.enum';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class MemberService {
@@ -26,6 +29,7 @@ export class MemberService {
 		private authService: AuthService,
 		private viewService: ViewService,
 		private likeService: LikeService,
+		private notificationService: NotificationService,
 	) {}
 
 	public async signup(input: MemberInput): Promise<Member> {
@@ -168,6 +172,25 @@ export class MemberService {
 			targetKey: 'memberLikes',
 			modifier,
 		});
+
+		// NOTIFICATION
+		const AuthMember: Member = await this.memberModel
+			.findOne({ _id: memberId, memberStatus: MemberStatus.ACTIVE })
+			.exec();
+		if (!AuthMember) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+		const notificInput = {
+			notificationType: NotificationType.LIKE,
+			notificationStatus: NotificationStatus.WAIT,
+			notificationGroup: NotificationGroup.MEMBER,
+			notificationTitle: 'Like',
+			notificationDesc: `${AuthMember.memberNick} Liked your photo`,
+			authorId: memberId,
+			receiverId: target._id,
+		};
+
+		await this.notificationService.createNotification(notificInput);
+
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
 		return result;
 	}

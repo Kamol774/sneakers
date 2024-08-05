@@ -25,15 +25,21 @@ import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { Product, Products } from '../../libs/dto/product/product';
 import { ProductUpdate } from '../../libs/dto/product/product.update';
+import { Member } from '../../libs/dto/member/member';
+import { NotificationInput } from '../../libs/dto/notification/notification.input';
+import { NotificationGroup, NotificationStatus, NotificationType } from '../../libs/enums/notification.enum';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class ProductService {
 	constructor(
 		@InjectModel('Product')
 		private readonly productModel: Model<Product>,
+		@InjectModel('Member') private readonly memberModel: Model<Member>,
 		private memberService: MemberService,
 		private viewService: ViewService,
 		private likeService: LikeService,
+		private notificationService: NotificationService,
 	) {}
 
 	public async createProduct(input: ProductInput): Promise<Product> {
@@ -202,6 +208,26 @@ export class ProductService {
 			targetKey: 'productLikes',
 			modifier,
 		});
+
+		//notification
+		const authMember: Member = await this.memberModel
+			.findOne({
+				_id: memberId,
+				memberStatus: MemberStatus.ACTIVE,
+			})
+			.exec();
+		if (!authMember) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+		const notificInput: NotificationInput = {
+			notificationType: NotificationType.LIKE,
+			notificationStatus: NotificationStatus.WAIT,
+			notificationGroup: NotificationGroup.PRODUCT,
+			notificationTitle: 'Like',
+			notificationDesc: `${authMember.memberNick} like your property`,
+			authorId: memberId,
+			receiverId: target.memberId,
+		};
+		await this.notificationService.createNotification(notificInput);
+
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
 		return result;
 	}
