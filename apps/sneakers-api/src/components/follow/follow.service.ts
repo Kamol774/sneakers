@@ -48,7 +48,6 @@ export class FollowService {
 			notificationDesc: `${targetMember.memberNick} followed you `,
 			authorId: followerId,
 			receiverId: followingId,
-			// propertyId: likeRefId,
 		};
 		await this.notificationService.createNotification(notificInput);
 
@@ -93,14 +92,13 @@ export class FollowService {
 			notificationDesc: `${authMember.memberNick} unfollowed you `,
 			authorId: followerId,
 			receiverId: followingId,
-			// propertyId: likeRefId,
 		};
 		await this.notificationService.createNotification(notificInput);
 
 		if (!result) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
-		await this.memberService.memberStatsEditor({ _id: followerId, targetKey: 'memberFollowings', modifier: 1 });
-		await this.memberService.memberStatsEditor({ _id: followingId, targetKey: 'memberFollowers', modifier: 1 });
+		await this.memberService.memberStatsEditor({ _id: followerId, targetKey: 'memberFollowings', modifier: -1 });
+		await this.memberService.memberStatsEditor({ _id: followingId, targetKey: 'memberFollowers', modifier: -1 });
 		return result;
 	}
 

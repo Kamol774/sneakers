@@ -14,7 +14,7 @@ import { StatisticModifier, T } from '../../libs/types/common';
 import { AuthService } from '../auth/auth.service';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
 import { lookupAuthMemberLiked } from '../../libs/config';
-import { Follower, Following } from '../../libs/dto/follow/follow';
+import { Follower, Following, MeFollowed } from '../../libs/dto/follow/follow';
 import { LikeService } from '../like/like.service';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { NotificationInput } from '../../libs/dto/notification/notification.input';
@@ -115,9 +115,14 @@ export class MemberService {
 		targetMember.meLiked = await this.likeService.checkLikeExistence(likeInput);
 
 		// meFollowed
-		// targetMember.meFollowed = await this.checkSubscription(memberId, targetId);
+		targetMember.meFollowed = await this.checkSubscription(memberId, targetId);
 
 		return targetMember;
+	}
+
+	private async checkSubscription(followerId: ObjectId, followingId: ObjectId): Promise<MeFollowed[]> {
+		const result = await this.followModel.findOne({ followingId: followingId, followerId: followerId }).exec();
+		return result ? [{ followerId: followerId, followingId: followingId, myFollowing: true }] : [];
 	}
 
 	public async getAgents(memberId: ObjectId, input: AgentsInquiry): Promise<Members> {
