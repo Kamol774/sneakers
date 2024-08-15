@@ -1,4 +1,4 @@
-version: '1.1'
+# version: '1.1'
 
 services:
   sneakers-api:
@@ -39,3 +39,9 @@ networks:
 # sneakers-next:  localhost:4000 => container:3000
 # sneakers-api:   localhost:4001 => container:3007
 # sneakers-batch: localhost:4002 => container:3008
+
+# docker compose up -d
+# docker compose up stop
+# docker compose up start
+# docker compose up restart
+# docker compose up stop && docker compose rm -f
