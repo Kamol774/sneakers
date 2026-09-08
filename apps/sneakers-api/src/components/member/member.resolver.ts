@@ -12,7 +12,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
 import { getSerialForImage, shapeIntoMongoObjectId, validMimeTypes } from '../../libs/config';
 import { WithoutGuard } from '../auth/guards/without.guard';
-import { GraphQLUpload, FileUpload } from 'graphql-upload';
+import { GraphQLUpload, FileUpload } from 'graphql-upload-minimal';
 import { createWriteStream } from 'fs';
 import { Message } from '../../libs/enums/common.enum';
 
